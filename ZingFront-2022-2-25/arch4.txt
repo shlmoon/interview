@@ -1,0 +1,19 @@
+一
+1. 取当前毫秒级别的时间戳time.timestamp() * 1000再int，得到t1
+2. redis.add(key) 获取当前redis浮标值: r1
+2.1 如果r1 > 100(业务量), redis.lock 再 redis.delete(key),redis.add(key) 获取 r1
+2.2 如果r1 < 100, 不处理
+3. r1前面补0，''.join(['0' for _ in range(3 - len(str(r1)))]) 得到r0
+4. return t1 + r0 + r1
+PS. 如果需要加上特定的前缀pre. 最后return: pre + t1 + r0 + r1
+
+二
+如果业务量不是太庞大，可使用雪花算法. 每天定时 redis.lpush(key)，
+取值的时候  redis.rpop(key)，
+rpop为空时，mq通知相关服务，批量更新，同时redis.rpop(key)
+PS. 这里面可能会有一个服务的故障率问题，
+如果需要达到理论上的100%（不考虑其他情况下）可用，需要额外的资源监听key，当key的长度少于 buffer(1000)时候，调用服务redis.lpush(key); 如果可以容忍该请求的故障率，可以直接返回对应的 error_code，同时调用 mq 通知 redis.lpush 并预警
+
+
+三
+小规模业务量, 利用uuid 和 timestamp

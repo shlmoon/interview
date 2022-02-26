@@ -14,13 +14,23 @@ class Solution:
     """
     @classmethod
     def f(cls, initial: list=None, n: int=0):
-        initial_len = len(initial)
+        def get_idx(lst):
+            max_val, max_idx = None, None
+            for i in range(len(lst)):
+                if max_val is None:
+                    max_val = lst[i]
+                    max_idx = i
+                else:
+                    if max_val < lst[i]:
+                        max_val = lst[i]
+                        max_idx = i
+            return max_idx
 
+        initial_len = len(initial)
         while n > 0:
-            max_val = max(initial)
-            index_val = initial.index(max_val)
+            idx = get_idx(initial)
             for i in range(initial_len):
-                if i == index_val:
+                if i == idx:
                     initial[i] -= 3
                 else:
                     initial[i] += 1

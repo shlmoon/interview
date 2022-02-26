@@ -43,9 +43,16 @@ class Solution:
 
         dfs(lst=l2, temp=[])
         res_abs = [sum(abs(temp[_] - temp[_ + 1]) for _ in range(l_len - 1)) for temp in res]
-        max_result = max(res_abs)
-        idx_list = [i for i in range(len(res_abs)) if res_abs[i] == max_result]
-        return [res[_] for _ in idx_list]
+        max_abs, idx_abs = 0, []
+        for i in range(len(res_abs)):
+            if max_abs < res_abs[i]:
+                max_abs = res_abs[i]
+                idx_abs.clear()
+                idx_abs.append(i)
+
+            elif max_abs == res_abs[i]:
+                idx_abs.append(i)
+        return [res[_] for _ in idx_abs]
 
 
 if __name__ == '__main__':
